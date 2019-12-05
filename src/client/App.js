@@ -3,7 +3,7 @@ import './app.css';
 import io from 'socket.io-client';
 import InstrumentsPanel from './components/InstrumentsPanel.js';
 import InstrumentsSettingPanel from './components/InstrumentsSettingPanel.js';
-import MstSoundComponent from './components/MasterSoundComponent.js';
+//import MstSoundComponent from './components/MasterSoundComponent.js';
 import Monitor from './components/MonitorComponent.js';
 import data from './lmac1.json';
 
@@ -94,17 +94,17 @@ class App extends Component {
     this.demoMode = false;
   }
 
-  componentDidMount() {
-    if(demoMode == true){
-      setInterval(() => {
-        var newIndex = this.state.index + 1;
-        var body = data[newIndex];
-        this.setState({bodies:data[newIndex], index: newIndex})
-      }, 150);
-    } else {
-      this.setState({bodies:bodies})
-    }
-  }
+  // componentDidMount() {
+  //   if(demoMode == true){
+  //     setInterval(() => {
+  //       var newIndex = this.state.index + 1;
+  //       var body = data[newIndex];
+  //       this.setState({bodies:data[newIndex], index: newIndex})
+  //     }, 150);
+  //   } else {
+  //     this.setState({bodies:bodies})
+  //   }
+  // }
 
   //Create a JSON file to capture the instrument settings and store somewhere
   onSaveSettingsHandler(){
@@ -120,54 +120,27 @@ class App extends Component {
   }
 
   renderMonitor(){
-    var bds = [];
-    if(this.demoMode){
-      bds= this.state.bodies;
-    } else{
-      bds = this.state.kinectBodies;
-    }
-    return(
-      <Monitor
-        newBodyParameter={(value)=>newBodyParameterHandle(value)}
-        demoMode = {this.demoMode}
-        bodies={bds}
-        instruments ={this.state.instruments}
-        newBodyParam = {(value)=> this.newBodyParamHandler(value)}
-      />
-    )
+    // var bds = [];
+    // if(this.demoMode){
+    //   bds= this.state.bodies;
+    // } else{
+    //   bds = this.state.kinectBodies;
+    // }
+    // return(
+    //   <Monitor
+    //     newBodyParameter={(value)=>newBodyParameterHandle(value)}
+    //     demoMode = {this.demoMode}
+    //     bodies={bds}
+    //     instruments ={this.state.instruments}
+    //     newBodyParam = {(value)=> this.newBodyParamHandler(value)}
+    //   />
+    // )
   }
 
   render() {
     return (
-      <div className="container-fluid">
-        <MstSoundComponent
-          audioContext = {this.audioContext}
-          instruments = {this.state.instruments}
-          bodyParam = {this.bodyParam}
-          instrumentTypeList={instrumentTypeList}
-          instrumentModeList={instrumentModeList}
-          instrumentChannelName={instrumentChannelName}
-        />
-      	<div className="row">
-      		<div className={"col-md-12 bg-secondary"}>
-            <h1 className={"text-white"}>Osmosi</h1>
-          </div>
-      	</div>
-      	<div className={"row"}>
-          <div className={"col-md-4 mt-2"}>
       		<InstrumentsPanel instruments={this.state.instruments} instrumentTypeList={instrumentTypeList}/>
-          </div>
-          <div className={"col-md-2 mt-2"}>
-            <InstrumentsSettingPanel
-              onSaveSettings={()=>this.onSaveSettingsHandler()}
-              onLoadSettings={()=>this.onLoadSettingsHandler()}/>
-          </div>
-      		<div className={"col-md-6 mt-5"}>
-            {this.renderMonitor()}
-          </div>
-        </div>
-      </div>
-    );
+        )
   }
 }
 

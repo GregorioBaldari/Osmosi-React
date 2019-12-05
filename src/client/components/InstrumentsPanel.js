@@ -97,11 +97,15 @@ class InstrumentsPanel extends Component {
 
   render() {
     return (
-        <ul className={"list-group border-0"}>
-          <li className={"list-group-item border-0"}>{this.renderInstrument(0)}</li>
-          <li className={"list-group-item border-0"}>{this.renderInstrument(1)}</li>
-          <li className={"list-group-item border-0"}>{this.renderInstrument(2)}</li>
-        </ul>
+      <div className="raw">
+        <div className="col-md-12">
+          <ul className={"list-group border-0"}>
+            <li className={"list-group-item border-0"}>{this.renderInstrument(0)}</li>
+            <li className={"list-group-item border-0"}>{this.renderInstrument(1)}</li>
+            <li className={"list-group-item border-0"}>{this.renderInstrument(2)}</li>
+          </ul>
+        </div>
+      </div>
     );
   }
 }

@@ -20,7 +20,7 @@ import InstrumentSelector from '../commons/instrumentSelector.js';
 import NoteSelector from '../commons/noteSelector.js';
 import ModeSelector from '../commons/modeSelector.js';
 import DiscreteSlider from '../commons/volumeSelector.js';
-import SoundSource from './SoundSource.js';
+//import SoundSource from './SoundSource.js';
 
 class Instrument extends Component {
   constructor(props){
