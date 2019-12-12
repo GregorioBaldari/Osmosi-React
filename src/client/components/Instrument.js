@@ -59,12 +59,12 @@ class Instrument extends Component {
 
   render() {
     return (
-      <div className={"col-12"}>
-          <ul className={"list-group border-0"}>
-            <li className={"list-group-item bg-secondary text-white"}>
+      <div className={"col-12 p-0"}>
+          <ul className={"list-group border-0 p-0"}>
+            <li className={"list-group-item bg-secondary text-white p-0"}>
               {this.props.instrument.name}
             </li>
-            <li className={"list-group-item border-0"}>
+            <li className={"list-group-item border-0 p-0"}>
               <div className={"row"}>
                 <div className={"col-md-2"}>
                   <OnOff
@@ -86,7 +86,7 @@ class Instrument extends Component {
                 </div>
               </div>
             </li>
-            <li className={"list-group-item border-0"}>
+            <li className={"list-group-item border-0 pt-5"}>
               <div className={"col-md-12"}>
                 <DiscreteSlider
                   onChangeCommitted={()=>this.onChangeVolumeHandler}
