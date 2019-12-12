@@ -317,10 +317,10 @@ class ExMonitor extends Component {
     var BB=this.canvas.getBoundingClientRect();
     var offsetX=BB.left;
     var offsetY=BB.top;
-    var msg= 'X:' + this.monitorMouseX + 'Y:' + this.monitorMouseY;
-    ctx.font = "12px Arial";
+    var msg= 'X:' + this.monitorMouseX + ' Y:' + this.monitorMouseY;
+    ctx.font = "12px Comic Sans MS";
     ctx.textAlign = "center";
-    ctx.fillText(msg, this.monitorMouseX+35, this.monitorMouseY-10);
+    ctx.fillText(msg, this.monitorMouseX+45, this.monitorMouseY-10);
     return;
   }
 
@@ -559,6 +559,8 @@ class ExMonitor extends Component {
     }
   }
 
+/////Mouse over Monitor controller
+
   onTrackingModeHandler(){
     this.trackingMode = !this.trackingMode;
     if(this.trackingMode){
@@ -607,12 +609,6 @@ class ExMonitor extends Component {
                 onClick = {this.onCanvasClickHandler}
                 >
               </canvas>
-              <div>
-              <span>{this.centerMonitorX}</span>
-              <span>{this.monitorMouseX}</span>
-              <span>{this.centerMonitorY}</span>
-              <span>{this.monitorMouseY}</span>
-              </div>
           </div>
           <div className="row pl-2">
             <div className = "col-3 border-right">
