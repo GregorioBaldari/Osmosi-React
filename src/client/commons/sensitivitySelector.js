@@ -49,7 +49,7 @@ function changeHandler(){
   alert('');
 }
 
-export default function VolumeSelector(props) {
+export default function SensitivitySelector (props) {
   const classes = useStyles();
 
   return (
@@ -57,7 +57,7 @@ export default function VolumeSelector(props) {
       <Typography id="discrete-slider" className={classes.textField}
       style={{ margin: 0}}
       gutterBottom>
-         Volume
+         Sensitivity
       </Typography>
       <Slider
         value = {props.value}
@@ -66,10 +66,10 @@ export default function VolumeSelector(props) {
         aria-labelledby="discrete-slider"
         valueLabelDisplay="auto"
         onChangeCommitted={props.onChangeCommitted()}
-        step={2}
+        step={0.1}
         marks
-        min={0}
-        max={10}
+        min={1}
+        max={2}
       />
       </div>
   );

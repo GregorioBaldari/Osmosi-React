@@ -39,9 +39,14 @@ import TrackingSwitch from '../commons/trackingSwitch.js'
 
 function bodyParam () {
   this.RWrist_Center_D = 0;
+  this.Max_RWrist_Center_D = -1; //Used to create sounds all along the available scale. See in genereto note functions in Apps
+
   this.LWrist_Center_D = 0;
+  this.Max_LWrist_Center_D = -1; //Used to create sounds all along the available scale. See in genereto note functions in Apps
+
   this.Body_Monitor_D = -1;
-  this.Max_Body_Monitor_D = -1;
+  this.Max_Body_Monitor_D = -1; //Used to create sounds all along the available scale. See in genereto note functions in Apps
+
   //Body Cnetre body, calculated. NOT a kinect param
   this.cx = 0;
   this.cy = 0;
@@ -158,6 +163,7 @@ class ExMonitor extends Component {
 
       this.demoMode = false;
       this.onDemoModeHandler = this.onDemoModeHandler.bind(this);
+      this.demoIndex = -1;
 
       this.trackingMode = false;
       this.onTrackingModeHandler = this.onTrackingModeHandler.bind(this);
@@ -240,8 +246,8 @@ class ExMonitor extends Component {
   }
 
   processDemoBodies(){
-    this.bodyParam = Object.assign({},this.props.bodyParam);
-    this.populateBDemoBodyParam2(this.body.joints,this.bodyParam);
+    this.bodyParam = Object.assign({},this.bodyParam);
+    this.populateBDemoBodyParam(this.body.joints,this.bodyParam);
     var ctx = this.canvas.getContext('2d');
     ctx.clearRect(0, 0, this.cw, this.ch);
 
@@ -268,12 +274,19 @@ class ExMonitor extends Component {
     var x3 = this.bodyParam.wrsLx;
     var y3 = this.bodyParam.wrsLy;
     this.bodyParam.RWrist_Center_D = Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+    if(this.bodyParam.RWrist_Center_D > this.bodyParam.Max_RWrist_Center_D){
+      this.bodyParam.Max_RWrist_Center_D = this.bodyParam.RWrist_Center_D;
+    }
+
     this.bodyParam.LWrist_Center_D = Math.sqrt((x3-x1)*(x3-x1)+(y3-y1)*(y3-y1));
+    if(this.bodyParam.LWrist_Center_D > this.bodyParam.Max_LWrist_Center_D){
+      this.bodyParam.Max_LWrist_Center_D = this.bodyParam.LWrist_Center_D;
+    }
 
     ////Calculate distance of body center from monitor centerMonitor
     this.bodyParam.Body_Monitor_D = Math.sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
-    if(this.bodyParam.Body_Monitor_D > this.bodyParam.Max_bodyParam){
-      this.bodyParam.Max_bodyParam = this.bodyParam.Body_Monitor_D;
+    if(this.bodyParam.Body_Monitor_D > this.bodyParam.Max_Body_Monitor_D){
+      this.bodyParam.Max_Body_Monitor_D = this.bodyParam.Body_Monitor_D;
     }
 
     this.props.newBodyParam(this.bodyParam);
@@ -288,6 +301,10 @@ class ExMonitor extends Component {
     if(this.drawMouseInput == true){
       this.drawMouseCoordinate(ctx);
       this.writeCoordinateOnCanvas(ctx);
+    };
+
+    if(this.demoMode){
+      this.writeDemoDetailsOnCanvas(ctx);
     };
 
   }
@@ -314,13 +331,24 @@ class ExMonitor extends Component {
   }
 
   writeCoordinateOnCanvas(ctx){
-    var BB=this.canvas.getBoundingClientRect();
-    var offsetX=BB.left;
-    var offsetY=BB.top;
+    // var BB=this.canvas.getBoundingClientRect();
+    // var offsetX=BB.left;
+    // var offsetY=BB.top;
     var msg= 'X:' + this.monitorMouseX + ' Y:' + this.monitorMouseY;
     ctx.font = "12px Comic Sans MS";
     ctx.textAlign = "center";
     ctx.fillText(msg, this.monitorMouseX+45, this.monitorMouseY-10);
+    return;
+  }
+
+  writeDemoDetailsOnCanvas(ctx){
+    var BB=this.canvas.getBoundingClientRect();
+    var offsetX=BB.left;
+    var offsetY=BB.top;
+    var msg='Frame ' + this.demoIndex + ' of ' + (data.length-1);
+    ctx.font = "10px Comic Sans MS";
+    ctx.textAlign = "center";
+    ctx.fillText(msg, 60, 20);
     return;
   }
 
@@ -448,7 +476,7 @@ class ExMonitor extends Component {
 
   }
 
-  populateBDemoBodyParam2(joints,bodyParam){
+  populateBDemoBodyParam(joints,bodyParam){
 
     // SPINE BASE
     bodyParam.cx = joints[0].x;
@@ -550,11 +578,16 @@ class ExMonitor extends Component {
 
   loadDemo(){
     if(this.demoMode == true){
-      var index = -1;
+      this.demoIndex = -1;
       this.demo = setInterval(() => {
-        ++index;
-        this.body = data[index][0];
-        this.processDemoBodies();
+        ++this.demoIndex;
+        if(this.demoIndex<data.length){
+          this.body = data[this.demoIndex][0];
+          this.processDemoBodies();
+        } else {
+          clearInterval(this.demo);
+          this.loadDemo(); //Let's starting the Demo over and over again!!
+        }
       }, 150);
     }
   }
@@ -580,6 +613,7 @@ class ExMonitor extends Component {
   onCanvasClickHandler(e){
     this.centerMonitorX = this.monitorMouseX;
     this.centerMonitorY = this.monitorMouseY;
+    this.bodyParam.Max_Body_Monitor_D = -1 //Just to reset this value
   }
 
   onMouseOutHandler(){
