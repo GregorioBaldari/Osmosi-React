@@ -452,10 +452,10 @@ class App extends Component {
           </div>
       	</div>
       	<div className={"row"}>
-          <div className={"col-md-6"}>
+          <div className={"col-md-6 pr-0"}>
       		<InstrumentsPanel instruments={this.state.instruments} instrumentTypeList={instrumentTypeList}/>
           </div>
-          <div className={"col-md-6 mt-3"}>
+          <div className={"col-md-6 mt-3 pl-0"}>
             {this.renderMonitor()}
           </div>
         </div>

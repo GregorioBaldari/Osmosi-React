@@ -26,7 +26,7 @@ export default function DemoSwitch(props) {
           />
         }
         labelPlacement="top"
-        label="Demo Mode"
+        label="Demo"
       />
     </FormGroup>
   );

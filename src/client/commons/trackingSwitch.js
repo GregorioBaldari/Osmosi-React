@@ -26,7 +26,7 @@ export default function TrackingSwitch(props) {
           />
         }
         labelPlacement="top"
-        label="Tracking Mode"
+        label="Tracking"
       />
     </FormGroup>
   );

@@ -66,9 +66,9 @@ class Instrument extends Component {
 
   render() {
     return (
-      <div className={"col-12 p-0"}>
+      <div className={"col-12 pt-1"}>
           <ul className={"list-group border-0 p-0"}>
-            <li className={"list-group-item bg-secondary text-white p-0"}>
+            <li className={"list-group-item bg-secondary text-white p-0 rounded-0"}>
               <div className={"row"}>
                 <div className={"col-md-3 pr-10"}>
                   {this.props.instrument.name}

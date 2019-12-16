@@ -3,39 +3,13 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import io from 'socket.io-client';
-import data from '../lmac1.json';
+import data_1 from '../lmac1.json';
+import data_2 from '../demoData/long-multiple-actions-MIN.json'
 import RecordingSwitch from '../commons/recordingSwitch.js';
 import DemoSwitch from '../commons/demoSwitch.js';
-import TrackingSwitch from '../commons/trackingSwitch.js'
-
-//https://github.com/js6450/kinect-data
-// SPINE BASE
-// SPIN MID
-// NECK
-// HEAD
-// SHOULDER LEFT
-// ELBOW LEFT
-// WRIST LEFT
-// HAND LEFT
-// SHOULDER RIGHT
-// ELBOW RIGHT
-// WRIST RIGHT
-// HAND RIGHT
-// HIP LEFT
-// KNEE LEFT
-// ANKLE LEFT
-// FOOT LEFT
-// HIP RIGHT
-// KNEE RIGHT
-// ANKLE RIGHT
-// FOOT RIGHT#
-
-///******Not Available in Demo demoMode
-// spineShoulder 	: 20,
-// handTipLeft 		: 21,
-// thumbLeft 			: 22,
-// handTipRight 		: 23,
-// thumbRight 			: 24
+import TrackingSwitch from '../commons/trackingSwitch.js';
+import BodySelector from '../commons/bodySelector.js';
+import IdentifyBodies from '../commons/identifyBodies.js'
 
 function bodyParam () {
   this.RWrist_Center_D = 0;
@@ -164,6 +138,7 @@ class ExMonitor extends Component {
       this.demoMode = false;
       this.onDemoModeHandler = this.onDemoModeHandler.bind(this);
       this.demoIndex = -1;
+      this.demoData = data_2;
 
       this.trackingMode = false;
       this.onTrackingModeHandler = this.onTrackingModeHandler.bind(this);
@@ -177,12 +152,20 @@ class ExMonitor extends Component {
       this.onCanvasClickHandler = this.onCanvasClickHandler.bind(this);
       this.onMouseOutHandler = this.onMouseOutHandler.bind(this);
 
-      this.body = null;
-      this.bodyParam = new bodyParam();
+      this.bodies = null //All the bodies tracked by Kinect and Demo Files
+      this.body = null; //Just the one generating sound
+
+      this.trackedBodyIndex = 0; //Used to switch between tracked bodies
+      this.showBodyIndex = false;
+      this.onChangeSelectedBodyHandler = this.onChangeSelectedBodyHandler.bind(this);
+      this.onIdentifyBodyClickHandler = this.onIdentifyBodyClickHandler.bind(this);
+
+      this.bodyParam = new bodyParam(); //Stores all the variable needed to generate sound in App.js
+
       this.demo = null;//SetInterval variable used to call clearInterval
       this.rec = null;//SetInterval variable used to call clearInterval
       this.recData = recData;
-      this.state = {recordingMode:this.recordingMode, demoMode:this.demoMode, trackingMode:this.trackingMode};
+      this.state = {recordingMode:this.recordingMode, demoMode:this.demoMode, trackingMode:this.trackingMode, trackedBodyIndex:this.trackedBodyIndex, showBodyIndex:this.showBodyIndex };
 
       //Monitor Phisical Paramater
       this.canvas = null;
@@ -201,6 +184,7 @@ class ExMonitor extends Component {
     console.log('Did Update');
   }
 
+/// Kinect prep. section
   settingKinectBodies(bodyFrame){
     this.demoMode = false
     //clearInterval(demo);
@@ -245,9 +229,9 @@ class ExMonitor extends Component {
     }
   }
 
+/// Demo prep. section
   processDemoBodies(){
     this.bodyParam = Object.assign({},this.bodyParam);
-    this.populateBDemoBodyParam(this.body.joints,this.bodyParam);
     var ctx = this.canvas.getContext('2d');
     ctx.clearRect(0, 0, this.cw, this.ch);
 
@@ -256,11 +240,28 @@ class ExMonitor extends Component {
         this.drawSimpleCircle(ctx, this.centerMonitorX, this.centerMonitorY, 10, 'green', false);
     }
 
-    //Draw each joints
-    for (var i = 0 ; i < 20; ++i) {
-      var joint= this.body.joints[i];
-      this.drawSimpleCircle(ctx, joint.x, joint.y, 5, 'red', true);
-    }
+    var self = this;
+    this.bodies.forEach( function(body, n){
+      var dotColor = 'lightgrey'; //Salmon
+      if(n == self.trackedBodyIndex){
+        dotColor = 'red' //Red color for the body is being tracked
+      };
+      //Draw each joints
+      for (var i = 0 ; i < 20; ++i) {
+        var joint= body.joints[i];
+        self.drawSimpleCircle(ctx, joint.x, joint.y, 5, dotColor, true);
+      };
+
+      if(self.showBodyIndex){
+        self.drawBodyIndex(ctx,body.joints[0].x, body.joints[0].y, dotColor, n);
+      };
+
+    })
+
+    //MUST ADD LOGIC TO SELECT THE BODY TO USE FOR SOUND
+    this.body = this.bodies[this.trackedBodyIndex];
+    this.populateBDemoBodyParam(this.body.joints,this.bodyParam);
+
     //Calculate distance of wristels
     var x0 = this.centerMonitorX;
     var y0 = this.centerMonitorY;
@@ -273,6 +274,7 @@ class ExMonitor extends Component {
     //Right
     var x3 = this.bodyParam.wrsLx;
     var y3 = this.bodyParam.wrsLy;
+
     this.bodyParam.RWrist_Center_D = Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
     if(this.bodyParam.RWrist_Center_D > this.bodyParam.Max_RWrist_Center_D){
       this.bodyParam.Max_RWrist_Center_D = this.bodyParam.RWrist_Center_D;
@@ -309,6 +311,8 @@ class ExMonitor extends Component {
 
   }
 
+
+/// Helper for drawing on screen
   drawMouseCoordinate(ctx){
     var BB=this.canvas.getBoundingClientRect();
 
@@ -345,7 +349,7 @@ class ExMonitor extends Component {
     var BB=this.canvas.getBoundingClientRect();
     var offsetX=BB.left;
     var offsetY=BB.top;
-    var msg='Frame ' + this.demoIndex + ' of ' + (data.length-1);
+    var msg='Frame ' + this.demoIndex + ' of ' + (this.demoData.length-1);
     ctx.font = "10px Comic Sans MS";
     ctx.textAlign = "center";
     ctx.fillText(msg, 60, 20);
@@ -379,6 +383,17 @@ class ExMonitor extends Component {
     this.bodyParam.LWrist_Center_D = Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
     this.drawSimpleCircle(ctx, x1, y1,   this.bodyParam.LWrist_Center_D, 'blue', toFill);
   }
+
+  drawBodyIndex (ctx,cx,cy, dotColor, index){
+    var bodyNumber = index + 1;
+    var msg= '' + bodyNumber;
+    ctx.font = "50px Comic Sans MS";
+    ctx.textAlign = "center";
+    ctx.fillText(msg, cx, cy);
+    return;
+  }
+
+/// Populate BodyParam used for producing sounds
 
   populateKinectBodyParam(joints,bodyParam,cw,ch){
     //Body Cnetre body, calculated. NOT a kinect param
@@ -581,8 +596,8 @@ class ExMonitor extends Component {
       this.demoIndex = -1;
       this.demo = setInterval(() => {
         ++this.demoIndex;
-        if(this.demoIndex<data.length){
-          this.body = data[this.demoIndex][0];
+        if(this.demoIndex<this.demoData.length){
+          this.bodies = this.demoData[this.demoIndex];
           this.processDemoBodies();
         } else {
           clearInterval(this.demo);
@@ -632,42 +647,78 @@ class ExMonitor extends Component {
     }
   }
 
+////Body Selection
+  onChangeSelectedBodyHandler(value){
+    if(value < this.demoData.length) { //Check if there is a body to be tracked with this index
+      this.trackedBodyIndex = value;
+      this.setState({trackedBodyIndex:this.trackedBodyIndex});
+    }
+  }
+
+  onIdentifyBodyClickHandler() {
+    this.showBodyIndex = true;
+    this.setState({showBodyIndex:this.showBodyIndex});
+    var self = this;
+      setTimeout (function(){
+        self.showBodyIndex = false;
+        self.setState({showBodyIndex:this.showBodyIndex});
+    }, 3000)
+  }
+
   render() {
     return (
-      <div>
-        <div className={"col-12"}>
-          <div className = "row pb-3">
-              <canvas className = {"border"} ref="canvas" id="bodyCanvas" width="512" height="424"
-                onMouseMove={this.onMouseMoveHandler}
-                onMouseOut = {this.onMouseOutHandler}
-                onClick = {this.onCanvasClickHandler}
-                >
-              </canvas>
-          </div>
-          <div className="row pl-2">
-            <div className = "col-3 border-right">
-              <DemoSwitch
-                onChange = {()=> this.onDemoModeHandler}
-                value = {this.state.demoMode}
-                disabled = {this.state.trackingMode}
-              />
-            </div>
-            <div className = "col-3">
-              <TrackingSwitch
-                onChange = {()=> this.onTrackingModeHandler}
-                value = {this.state.trackingMode}
-                disabled = {this.state.demoMode}
-              />
-            </div>
-            <div className = "col-3">
-              <RecordingSwitch
-                onChange = {()=> this.onRecordingModeHandler}
-                value = {this.state.recordingMode}
-                disabled = {!this.state.trackingMode}
-              />
-            </div>
+      <div className="container-fluid">
+        <div className="row bg-secondary text-white p-0 mb-4">
+          <div className="col-md-12">
+            Bodies Monitor
           </div>
         </div>
+      	<div className="row">
+      		<div className="col-md-9">
+      			<div className="row">
+      				<div className="col-md-12">
+                <canvas className = {"border"} ref="canvas" id="bodyCanvas" width="512" height="424"
+                onMouseMove={this.onMouseMoveHandler}
+                onMouseOut = {this.onMouseOutHandler}
+                onClick = {this.onCanvasClickHandler}>
+                </canvas>
+      				</div>
+      			</div>
+      			<div className="row">
+              <div className = "col-3 border-right">
+                <DemoSwitch
+                onChange = {()=> this.onDemoModeHandler}
+                value = {this.state.demoMode}
+                disabled = {this.state.trackingMode}/>
+              </div>
+              <div className = "col-2">
+                <TrackingSwitch
+                onChange = {()=> this.onTrackingModeHandler}
+                value = {this.state.trackingMode}
+                disabled = {this.state.demoMode}/>
+              </div>
+              <div className = "col-3">
+                <RecordingSwitch
+                onChange = {()=> this.onRecordingModeHandler}
+                value = {this.state.recordingMode}
+                disabled = {!this.state.trackingMode}/>
+              </div>
+      			</div>
+      		</div>
+      		<div className="col-md-3 pr-0">
+          	<div className="row">
+              <div className="col-md-12">
+                <IdentifyBodies onClick = {()=> this.onIdentifyBodyClickHandler}/>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-md-12">
+                <BodySelector
+                onChange = {(value)=>this.onChangeSelectedBodyHandler(value)}/>
+              </div>
+            </div>
+      		</div>
+      	</div>
       </div>
     );
   }
