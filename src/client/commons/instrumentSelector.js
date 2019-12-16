@@ -10,6 +10,7 @@ const useStyles = makeStyles(theme => ({
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,
+    fontSize: 13,
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -33,6 +34,7 @@ export default function InstrumentSelector(props) {
       [name]: event.target.value,
     });
   };
+//Adding Sounds: STEP 4
 
   return (
     <div>
@@ -49,6 +51,9 @@ export default function InstrumentSelector(props) {
         >
           <option value={'Classic Guitar'}>Classic Guitar</option>
           <option value={'Water Drop'}>Water Drop</option>
+          <option value={'Wood Block'}>Wood Block</option>
+          <option value={'Marimba'}>Marimba</option>
+          <option value={'Water Flowing'}>Water Flowing</option>
         </Select>
       </FormControl>
     </div>

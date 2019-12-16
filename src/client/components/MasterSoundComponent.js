@@ -56,14 +56,14 @@ var classic_guitar = {
   assetsPath: "src/client/audio/guitar/"
 };
 
-createjs.Sound.alternateExtensions = ["wav"];	// add other extensions to try loading if the src file extension is not supported
-createjs.Sound.addEventListener("fileload", function(event) {
-
-}); // add an event listener for when load is completed
-
-water_drop.sounds = createjs.Sound.registerSounds(water_drop.source, water_drop.assetsPath);
-classic_guitar.sounds = createjs.Sound.registerSounds(classic_guitar.source, classic_guitar.assetsPath);
-
+// createjs.Sound.alternateExtensions = ["wav"];	// add other extensions to try loading if the src file extension is not supported
+// createjs.Sound.addEventListener("fileload", function(event) {
+//
+// }); // add an event listener for when load is completed
+//
+// water_drop.sounds = createjs.Sound.registerSounds(water_drop.source, water_drop.assetsPath);
+// classic_guitar.sounds = createjs.Sound.registerSounds(classic_guitar.source, classic_guitar.assetsPath);
+//
 
 class MstSoundComponent extends Component {
   constructor(props){

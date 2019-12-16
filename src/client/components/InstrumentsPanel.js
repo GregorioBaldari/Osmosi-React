@@ -11,6 +11,20 @@ class InstrumentsPanel extends Component {
       this.state = {instruments:this.props.instruments};
   }
 
+  // Triggered by the change of sensitivity
+  onChangeSensitivityHandler (i,value){
+    const instruments = this.state.instruments.slice();
+    const instrument = instruments[i];
+    if(instrument.sensitivity != value){
+      instrument.sensitivity = value;
+      instruments[i] = instrument;
+      this.setState({instruments:instruments});
+    }
+    console.log('******Instrument Panel **********');
+    console.log('Sensitivity of:', i);
+    console.log('Set With Value:', value);
+  }
+
   // Triggered by the change of volume
   onChangeVolumeHandler (i,v) {
     var value = v/10;
@@ -89,6 +103,7 @@ class InstrumentsPanel extends Component {
         onChangeNote={(value)=>this.onChangeNoteHandler(i,value)}
         onChangeMode={(value)=>this.onChangeModeHandler(i,value)}
         onChangeVolume={(value)=>this.onChangeVolumeHandler(i,value)}
+        onChangeSensitivity={(value)=>this.onChangeSensitivityHandler(i,value)}
         instrument={this.state.instruments[i]}
         instrumentTypeList = {this.props.instrumentTypeList}
       />
@@ -99,8 +114,8 @@ class InstrumentsPanel extends Component {
     return (
         <ul className={"list-group border-0"}>
           <li className={"list-group-item border-0"}>{this.renderInstrument(0)}</li>
-          <li className={"list-group-item border-0"}>{this.renderInstrument(1)}</li>
-          <li className={"list-group-item border-0"}>{this.renderInstrument(2)}</li>
+          <li className={"list-group-item border-0 pt-0"}>{this.renderInstrument(1)}</li>
+          <li className={"list-group-item border-0 pt-0"}>{this.renderInstrument(2)}</li>
         </ul>
     );
   }

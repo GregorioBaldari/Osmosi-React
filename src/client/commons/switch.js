@@ -12,7 +12,7 @@ export default function OnOff(props) {
   };
 
   return (
-    <div className={"mt-3"}>
+    <div>
       <Switch
         checked={props.value}
         onChange={props.onChange()}

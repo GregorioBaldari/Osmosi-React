@@ -5,10 +5,16 @@ import Slider from '@material-ui/core/Slider';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: 300,
+    width: 200,
   },
   margin: {
     height: theme.spacing(3),
+  },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: 0,
+    fontSize: 13,
   },
 }));
 
@@ -43,11 +49,16 @@ function changeHandler(){
   alert('');
 }
 
-export default function DiscreteSlider(props) {
+export default function VolumeSelector(props) {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
+      <Typography id="discrete-slider" className={classes.textField}
+      style={{ margin: 0}}
+      gutterBottom>
+         Volume
+      </Typography>
       <Slider
         value = {props.value}
         defaultValue={5}
