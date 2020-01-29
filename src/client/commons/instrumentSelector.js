@@ -52,6 +52,7 @@ export default function InstrumentSelector(props) {
           <option value={'Classic Guitar'}>Classic Guitar</option>
           <option value={'Water Drop'}>Water Drop</option>
           <option value={'Wood Block'}>Wood Block</option>
+          <option value={'Wood Block Single'}>Wood Block Single</option>
           <option value={'Marimba'}>Marimba</option>
           <option value={'Water Flowing'}>Water Flowing</option>
         </Select>

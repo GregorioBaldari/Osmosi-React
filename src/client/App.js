@@ -15,8 +15,8 @@ import data from './lmac1.json';
 // 4. Add to InstrumentSelector component
 
 //Adding Sounds: STEP 1
-var wood_block = {
-  name:'Wood Block',
+var wood_block_single = {
+  name:'Wood Block Single',
   instance: null,
   source: [
     {src:"woodblock__025_mezzo-forte_struck-singly.mp3", id:"wbc0"},
@@ -25,6 +25,48 @@ var wood_block = {
     {src:"woodblock__025_mezzo-forte_struck-singly.mp3", id:"wbc3"},
   ],
   notes: ["wbc0","wbc1","wbc2","wbc3"],
+  assetsPath: "src/client/audio/wood_block_single/"
+};
+
+var wood_block = {
+  name:'Wood Block',
+  instance: null,
+  source: [
+    {src:"01-E1.wav", id:"E1"},
+    {src:"02-F1.wav", id:"F1"},
+    {src:"03-F#1.wav", id:"F#1"},
+    {src:"04-G1.wav", id:"G1"},
+    {src:"05-G#1.wav", id:"G#1"},
+    {src:"06-A1.wav", id:"A1"},
+    {src:"07-A#1.wav", id:"A#1"},
+    {src:"08-B2.wav", id:"B2"},
+    {src:"09-C2.wav", id:"C2"},
+    {src:"10-C#2.wav", id:"C#2"},
+    {src:"11-D2.wav", id:"D2"},
+    {src:"12-D#2.wav", id:"D#2"},
+    {src:"13-E2.wav", id:"E2"},
+    {src:"14-F2.wav", id:"F2"},
+    {src:"15-F#2.wav", id:"F#2"},
+    {src:"16-G2.wav", id:"G2"},
+    {src:"17-G#2.wav", id:"G#2"},
+    {src:"18-A2.wav", id:"A2"},
+    {src:"19-A#2.wav", id:"A#2"},
+    {src:"20-B3.wav", id:"B3"},
+    {src:"21-C3.wav", id:"C3"},
+    {src:"22-C#3.wav", id:"C#3"},
+    {src:"23-D3.wav", id:"D3"},
+    {src:"24-D#3.wav", id:"D#3"},
+    {src:"25-E3.wav", id:"E3"},
+    {src:"26-F3.wav", id:"F3"},
+    {src:"27-F#3.wav", id:"F#3"},
+    {src:"28-G3.wav", id:"G3"},
+    {src:"29-G#3.wav", id:"G#3"},
+    {src:"30-A3.wav", id:"A3"},
+    {src:"31-A#3.wav", id:"A#3"},
+    {src:"32-B4.wav", id:"B4"},
+    {src:"33-C4.wav", id:"C4"},
+  ],
+  notes: ["E1","F1","F#1","G1","G#1","A1","A#1","B2","C2","C#2","D2","D#2","E2","F2","F#2","G2","G#2","A2","A#2","B2","C3","C#3","D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3","C3"],
   assetsPath: "src/client/audio/wood_block/"
 };
 
@@ -130,6 +172,8 @@ createjs.Sound.addEventListener("fileload", function(event) {
 
 
 //Adding Sounds: STEP 2
+
+wood_block_single.sounds = createjs.Sound.registerSounds(wood_block_single.source, wood_block_single.assetsPath);
 wood_block.sounds = createjs.Sound.registerSounds(wood_block.source, wood_block.assetsPath);
 water_drop.sounds = createjs.Sound.registerSounds(water_drop.source, water_drop.assetsPath);
 classic_guitar.sounds = createjs.Sound.registerSounds(classic_guitar.source, classic_guitar.assetsPath);
@@ -137,7 +181,7 @@ water_flowing.sounds = createjs.Sound.registerSounds(water_flowing.source, water
 marimba.sounds = createjs.Sound.registerSounds(marimba.source, marimba.assetsPath);
 
 //Adding Sounds: STEP 3
-const instrumentTypeList = {classic_guitar:'Classic Guitar', water_drop:'Water Drop', wood_block:'Wood Block', water_flowing:"Water Flowing", marimba:"Marimba"};
+const instrumentTypeList = {classic_guitar:'Classic Guitar', water_drop:'Water Drop', wood_block_single:'Wood Block Single', wood_block:'Wood Block', water_flowing:"Water Flowing", marimba:"Marimba"};
 const instrumentName =['Body', 'Hands', 'Feet', 'Spine']; // Define the name of the instruments  based on their link to the body's parts
 const instrumentModeList = {random:'Random', scale:'Scale'};
 const instrumentChannelName ={body:'Body', hands:'Hands', feet: 'Feet'};
@@ -306,6 +350,9 @@ class App extends Component {
       break;
       case instrumentTypeList.wood_block:
       return wood_block;
+      break;
+      case instrumentTypeList.wood_block_single:
+      return wood_block_single;
       break;
       case instrumentTypeList.water_flowing:
       return water_flowing;
