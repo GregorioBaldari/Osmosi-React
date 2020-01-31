@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './app.css';
-import io from 'socket.io-client';
 import InstrumentsPanel from './components/InstrumentsPanel.js';
 import InstrumentsSettingPanel from './components/InstrumentsSettingPanel.js';
 import MstSoundComponent from './components/MasterSoundComponent.js';
@@ -34,39 +33,39 @@ var wood_block = {
   source: [
     {src:"01-E1.wav", id:"E1"},
     {src:"02-F1.wav", id:"F1"},
-    {src:"03-F#1.wav", id:"F#1"},
+    {src:"03-Fd1.wav", id:"Fd1"},
     {src:"04-G1.wav", id:"G1"},
-    {src:"05-G#1.wav", id:"G#1"},
+    {src:"05-Gd1.wav", id:"Gd1"},
     {src:"06-A1.wav", id:"A1"},
-    {src:"07-A#1.wav", id:"A#1"},
+    {src:"07-Ad1.wav", id:"Ad1"},
     {src:"08-B2.wav", id:"B2"},
     {src:"09-C2.wav", id:"C2"},
-    {src:"10-C#2.wav", id:"C#2"},
+    {src:"10-Cd2.wav", id:"Cd2"},
     {src:"11-D2.wav", id:"D2"},
-    {src:"12-D#2.wav", id:"D#2"},
+    {src:"12-Dd2.wav", id:"Dd2"},
     {src:"13-E2.wav", id:"E2"},
     {src:"14-F2.wav", id:"F2"},
-    {src:"15-F#2.wav", id:"F#2"},
+    {src:"15-Fd2.wav", id:"Fd2"},
     {src:"16-G2.wav", id:"G2"},
-    {src:"17-G#2.wav", id:"G#2"},
+    {src:"17-Gd2.wav", id:"Gd2"},
     {src:"18-A2.wav", id:"A2"},
-    {src:"19-A#2.wav", id:"A#2"},
+    {src:"19-Ad2.wav", id:"Ad2"},
     {src:"20-B3.wav", id:"B3"},
     {src:"21-C3.wav", id:"C3"},
-    {src:"22-C#3.wav", id:"C#3"},
+    {src:"22-Cd3.wav", id:"Cd3"},
     {src:"23-D3.wav", id:"D3"},
-    {src:"24-D#3.wav", id:"D#3"},
+    {src:"24-Dd3.wav", id:"Dd3"},
     {src:"25-E3.wav", id:"E3"},
     {src:"26-F3.wav", id:"F3"},
-    {src:"27-F#3.wav", id:"F#3"},
+    {src:"27-Fd3.wav", id:"Fd3"},
     {src:"28-G3.wav", id:"G3"},
-    {src:"29-G#3.wav", id:"G#3"},
+    {src:"29-Gd3.wav", id:"Gd3"},
     {src:"30-A3.wav", id:"A3"},
-    {src:"31-A#3.wav", id:"A#3"},
+    {src:"31-Ad3.wav", id:"Ad3"},
     {src:"32-B4.wav", id:"B4"},
     {src:"33-C4.wav", id:"C4"},
   ],
-  notes: ["E1","F1","F#1","G1","G#1","A1","A#1","B2","C2","C#2","D2","D#2","E2","F2","F#2","G2","G#2","A2","A#2","B2","C3","C#3","D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3","C3"],
+  notes: ["E1","F1","Fd1","G1","Gd1","A1","Ad1","B2","C2","Cd2","D2","Dd2","E2","F2","Fd2","G2","Gd2","A2","Ad2","B2","C3","Cd3","D3","Dd3","E3","F3","Fd3","G3","Gd3","A3","Ad3","B3","C3"],
   assetsPath: "src/client/audio/wood_block/"
 };
 

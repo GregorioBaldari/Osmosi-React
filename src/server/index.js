@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const os = require('os');
-//const Kinect2 = require('kinect2');
+const Kinect2 = require('kinect2');
 const mongoose = require('mongoose');
 
 // const result = dotenv.config();
@@ -75,18 +75,18 @@ http.listen(8080, function(){
   console.log('Server listening on :8080');
 });
 
-// Kinect Section
-//kinect = new Kinect2();
+//Kinect Section
+kinect = new Kinect2();
 
-// if(kinect.open()){
-//   kinect.on('bodyFrame', sendFrame);
-//
-//   function sendFrame(bodyFrame){
-//       io.emit('bodyFrame', bodyFrame);
-//   }
-//
-//   kinect.openBodyReader();
-// }
+if(kinect.open()){
+  kinect.on('bodyFrame', sendFrame);
+
+  function sendFrame(bodyFrame){
+      io.emit('bodyFrame', bodyFrame);
+  }
+
+  kinect.openBodyReader();
+}
 
 
 

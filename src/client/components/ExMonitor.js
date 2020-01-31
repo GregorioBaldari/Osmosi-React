@@ -186,51 +186,23 @@ class ExMonitor extends Component {
 
 /// Kinect prep. section
   settingKinectBodies(bodyFrame){
-    this.demoMode = false
+    if (this.demoMode) return;
+    if (!this.trackingMode) return;
     //clearInterval(demo);
+    this.bodies = [];
     for(var i=0; i<bodyFrame.bodies.length; ++i){
       if (bodyFrame.bodies[i].tracked === true){
-        this.body = bodyFrame.bodies[i];
-        this.processKinectBodies();
+        //var json = JSON.stringify(bodyFrame.bodies[i]);
+        this.bodies.push(bodyFrame.bodies[i]);
+        //this.processKinectBodies();
+        this.processBodies();
         return;
       }
     }
   }
 
-  processKinectBodies(){
-    this.bodyParam = Object.assign({},this.props.bodyParam);
-    this.populateKinectBodyParam(this.body.joints,this.bodyParam,cw,ch);
-    var ctx = this.canvas
-    ctx.clearRect(0, 0, this.cw, this.ch);
-
-    //Draw Joints
-    for (var i =0 ; i<20; ++i) {
-      var joint= this.body.joints[i];
-      this.drawSimpleCircle(ctx, joint.colorX*this.cw, joint.colorY*this.ch, 5, 'red', true);
-    }
-
-    //Calculate distance of wristels
-    var x1 = this.bodyParam.cx;
-    var y1 = this.bodyParam.cy;
-    //Left
-    var x2 = this.bodyParam.wrsRx;
-    var y2 = this.bodyParam.wrsRy;
-    //Right
-    var x3 = this.bodyParam.wrsLx;
-    var y3 = this.bodyParam.wrsLy;
-    this.bodyParam.RWrist_Center_D = Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
-    this.bodyParam.LWrist_Center_D = Math.sqrt((x3-x1)*(x3-x1)+(y3-y1)*(y3-y1));
-    this.props.newBodyParam(this.bodyParam);
-
-    //Draw distance of wristels
-    if(true){
-      this.drawSimpleCircle(ctx, this.bodyParam.cx, this.bodyParam.cy, this.bodyParam.RWrist_Center_D, 'red', false);
-      this.drawSimpleCircle(ctx, this.bodyParam.cx, this.bodyParam.cy, this.bodyParam.LWrist_Center_D, 'red', false);
-    }
-  }
-
 /// Demo prep. section
-  processDemoBodies(){
+  processBodies(){
     this.bodyParam = Object.assign({},this.bodyParam);
     var ctx = this.canvas.getContext('2d');
     ctx.clearRect(0, 0, this.cw, this.ch);
@@ -249,18 +221,34 @@ class ExMonitor extends Component {
       //Draw each joints
       for (var i = 0 ; i < 20; ++i) {
         var joint= body.joints[i];
-        self.drawSimpleCircle(ctx, joint.x, joint.y, 5, dotColor, true);
+        if(self.demoMode){
+          self.drawSimpleCircle(ctx, joint.x, joint.y, 5, dotColor, true);
+        };
+        if(self.trackingMode){
+          self.drawSimpleCircle(ctx, joint.depthX*self.cw, joint.depthY*self.ch, 5, dotColor, true);
+        }
       };
 
+      //Write the body Index. Called by onIdentifyBodyClickHandler method
       if(self.showBodyIndex){
-        self.drawBodyIndex(ctx,body.joints[0].x, body.joints[0].y, dotColor, n);
+          if(self.demoMode) {
+            self.drawBodyIndex(ctx,body.joints[0].x, body.joints[0].y, dotColor, n);
+          }
+          if(self.trackingMode) {
+            self.drawBodyIndex(ctx,body.joints[0].depthX*self.cw, body.joints[0].depthY*self.ch, dotColor, n);
+          }
       };
 
     })
 
     //MUST ADD LOGIC TO SELECT THE BODY TO USE FOR SOUND
     this.body = this.bodies[this.trackedBodyIndex];
-    this.populateBDemoBodyParam(this.body.joints,this.bodyParam);
+    if(this.demo) {
+      this.populateDemoBodyParam(this.body.joints, this.bodyParam);
+    }
+    if(this.trackingMode) {
+      this.populateKinectBodyParam(this.body.joints, this.bodyParam, this.cw, this.ch);
+    };
 
     //Calculate distance of wristels
     var x0 = this.centerMonitorX;
@@ -310,7 +298,6 @@ class ExMonitor extends Component {
     };
 
   }
-
 
 /// Helper for drawing on screen
   drawMouseCoordinate(ctx){
@@ -396,102 +383,50 @@ class ExMonitor extends Component {
 /// Populate BodyParam used for producing sounds
 
   populateKinectBodyParam(joints,bodyParam,cw,ch){
-    //Body Cnetre body, calculated. NOT a kinect param
-    bodyParam.cx = joints[0].colorX*cw;
-    bodyParam.cy = joints[0].colorX*cw;
 
     // SPINE BASE
-    //bodyParam.spnbx = joints[0].colorX*cw;
-    //bodyParam.spnby = joints[0].colorY*ch;
-
-    // SPIN MID
-    //bodyParam.spnmx = joints[1].colorX*cw;
-    //bodyParam.spmmy = joints[1].colorY*ch;
-
-    // NECK
-    //bodyParam.nckx = joints[2].colorX*cw;
-    //bodyParam.ncky = joints[2].colorY*ch;
+    bodyParam.cx = joints[0].depthX*cw;
+    bodyParam.cy = joints[0].depthY*ch;
 
     // HEAD
-    bodyParam.hdx = joints[3].colorX*cw;
-    bodyParam.hdy = joints[3].colorY*ch;
-
-    // SHOULDER LEFT
-    //bodyParam.shdLx = joints[4].colorX*cw;
-    //bodyParam.shdLy = joints[4].colorY*ch;
-
-    // ELBOW LEFT
-    //bodyParam.elbLx = joints[5].colorX*cw;
-    //bodyParam.elbLy = joints[5].colorY*ch;
+    bodyParam.hdx = joints[3].depthX*cw;
+    bodyParam.hdy = joints[3].depthY*ch;
 
     // WRIST LEFT
-    bodyParam.wrsLx = joints[6].colorX*cw;
-    bodyParam.wrsLy = joints[6].colorY*ch;
+    bodyParam.wrsLx = joints[6].depthX*cw;
+    bodyParam.wrsLy = joints[6].depthY*ch;
 
     // HAND LEFT
-    //bodyParam.hndLx = joints[7].colorX*cw;
-    //bodyParam.hndLy = joints[7].colorY*ch;
-
-    // SHOULDER RIGHT
-    //bodyParam.shdRx = joints[8].colorX*cw;
-    //bodyParam.shdRy = joints[8].colorY*ch;
-
-    // ELBOW RIGHT
-    //bodyParam.elbRx = joints[9].colorX*cw;
-    //bodyParam.elbRy = joints[9].colorY*ch;
+    bodyParam.hlx = joints[7].depthX*cw;
+    bodyParam.hly = joints[7].depthY*ch;
 
     // WRIST RIGHT
-    bodyParam.wrsRx = joints[10].colorX*cw;
-    bodyParam.wrsRy = joints[10].colorY*ch;
+    bodyParam.wrsRx = joints[10].depthX*cw;
+    bodyParam.wrsRy = joints[10].depthY*ch;
 
     // HAND RIGHT
-    //bodyParam.hndRx = joints[11].colorX*cw;
-    //bodyParam.hndRy = joints[11].colorY*ch;
 
-    // HIP LEFT
-    //bodyParam.hpLx = joints[12].colorX*cw;
-    //bodyParam.hpLy = joints[12].colorY*ch;
+    bodyParam.hrx = joints[11].depthX*cw;
+    bodyParam.hry = joints[11].depthY*ch;
 
     // KNEE LEFT
-    bodyParam.knLx = joints[13].colorX*cw;
-    bodyParam.knLy = joints[13].colorY*ch;
+    bodyParam.knLx = joints[13].depthX*cw;
+    bodyParam.knLy = joints[13].depthY*ch;
 
     // ANKLE LEFT
-    bodyParam.ankLx = joints[14].colorX*cw;
-    bodyParam.ankLy = joints[14].colorY*ch;
 
-    // FOOT LEFT
-    //bodyParam.ftLx = joints[15].colorX*cw;
-    //bodyParam.ftLy = joints[15].colorY*ch;
-
-    // HIP RIGHT
-    //bodyParam.hpRx = joints[16].colorX*cw;
-    //bodyParam.hpRy = joints[16].colorY*ch;
-
-    // KNEE RIGHT
-    bodyParam.knRx = joints[17].colorX*cw;
-    bodyParam.knRy = joints[17].colorY*ch;
+    bodyParam.ankLx = joints[14].depthX*cw;
+    bodyParam.ankLy = joints[14].depthY*ch;
 
     // ANKLE RIGHT
-    bodyParam.ankRx = joints[18].colorX*cw;
-    bodyParam.ankRy = joints[18].colorY*ch;
 
-    // FOOT RIGHT
-    //bodyParam.ftRx = joints[19].colorX*cw;
-    //bodyParam.ftRy = joints[19].colorY*cw;
-
-    ///******Not Available in Demo demoMode
-    // spineShoulder 	: 20,
-    // handTipLeft 		: 21,
-    // thumbLeft 			: 22,
-    // handTipRight 		: 23,
-    // thumbRight 			: 24
+    bodyParam.ankRx = joints[18].depthX*cw;
+    bodyParam.ankRy = joints[18].depthY*ch;
 
     return bodyParam;
-
   }
 
-  populateBDemoBodyParam(joints,bodyParam){
+  populateDemoBodyParam(joints,bodyParam){
 
     // SPINE BASE
     bodyParam.cx = joints[0].x;
@@ -598,7 +533,7 @@ class ExMonitor extends Component {
         ++this.demoIndex;
         if(this.demoIndex<this.demoData.length){
           this.bodies = this.demoData[this.demoIndex];
-          this.processDemoBodies();
+          this.processBodies();
         } else {
           clearInterval(this.demo);
           this.loadDemo(); //Let's starting the Demo over and over again!!
@@ -649,9 +584,17 @@ class ExMonitor extends Component {
 
 ////Body Selection
   onChangeSelectedBodyHandler(value){
-    if(value < this.demoData.length) { //Check if there is a body to be tracked with this index
-      this.trackedBodyIndex = value;
-      this.setState({trackedBodyIndex:this.trackedBodyIndex});
+    //IF DEMO MODE MODE AND DO BELOW
+    if(this.demoMode){
+      if(value < this.demoData.length) { //Check if there is a body to be tracked with this index
+        this.trackedBodyIndex = value;
+        this.setState({trackedBodyIndex:this.trackedBodyIndex});
+      }
+    };
+    if(this.trackingMode){
+        if(value < this.bodies.length);
+        this.trackedBodyIndex = value;
+        this.setState({trackedBodyIndex:this.trackedBodyIndex});
     }
   }
 
