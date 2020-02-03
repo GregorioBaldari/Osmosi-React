@@ -96,8 +96,8 @@ class Instrument extends Component {
               </div>
             </li>
             <li className={"list-group-item ml-5 border-0 p-0"}>
-              <div className={"row ml-4"}>
-                <div className={"col-md-5 ml-5"}>
+              <div className={"row ml-0"}>
+                <div className={"col-md-5 ml-0"}>
                   <VolumeSelector
                   onChangeCommitted={()=>this.onChangeVolumeHandler}
                   value={this.props.instrument.volume*10}/>

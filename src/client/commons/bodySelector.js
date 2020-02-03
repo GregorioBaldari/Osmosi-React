@@ -25,9 +25,9 @@ export default function BodySelector(props) {
   return (
       <FormControl component="fieldset" className={classes.formControl}>
         <RadioGroup aria-label="gender" name="gender1" value={value} onChange={handleChange}>
-          <FormControlLabel value="0" control={<Radio />} label="Body 1" />
-          <FormControlLabel value="1" control={<Radio />} label="Body 2" />
-          <FormControlLabel value="2" control={<Radio />} label="Body 3" />
+          <FormControlLabel value="0" control={<Radio />} labelPlacement="bottom" label="Body 1" />
+          <FormControlLabel value="1" control={<Radio />} labelPlacement="bottom" label="Body 2" />
+          <FormControlLabel value="2" control={<Radio />} labelPlacement="bottom" label="Body 3" />
         </RadioGroup>
       </FormControl>
     )

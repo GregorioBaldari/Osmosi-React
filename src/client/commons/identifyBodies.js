@@ -16,6 +16,7 @@ export default function IdentifyBodies(props) {
   return (
     <div className={classes.root}>
       <Button
+      size="small"
       onClick= {props.onClick()}
       variant="contained">Identify</Button>
     </div>
