@@ -4,12 +4,12 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import io from 'socket.io-client';
 import data_1 from '../lmac1.json';
-import data_2 from '../demoData/long-multiple-actions-MIN.json'
+import data_2 from '../demoData/long-multiple-actions-1-MIN.json'
 import RecordingSwitch from '../commons/recordingSwitch.js';
 import DemoSwitch from '../commons/demoSwitch.js';
 import TrackingSwitch from '../commons/trackingSwitch.js';
 import BodySelector from '../commons/bodySelector.js';
-import IdentifyBodies from '../commons/identifyBodies.js'
+import IdentifyBodiesIcon from '../commons/identifyBodiesIcon.js'
 
 function bodyParam () {
   this.RWrist_Center_D = 0;
@@ -195,10 +195,12 @@ class ExMonitor extends Component {
         //var json = JSON.stringify(bodyFrame.bodies[i]);
         this.bodies.push(bodyFrame.bodies[i]);
         //this.processKinectBodies();
-        this.processBodies();
-        return;
+        //this.processBodies();
+        //return;
       }
     }
+    this.processBodies();
+    return;
   }
 
 /// Demo prep. section
@@ -332,6 +334,7 @@ class ExMonitor extends Component {
     return;
   }
 
+/// Number of frame vs the remaining frame for the demo
   writeDemoDetailsOnCanvas(ctx){
     var BB=this.canvas.getBoundingClientRect();
     var offsetX=BB.left;
@@ -381,7 +384,6 @@ class ExMonitor extends Component {
   }
 
 /// Populate BodyParam used for producing sounds
-
   populateKinectBodyParam(joints,bodyParam,cw,ch){
 
     // SPINE BASE
@@ -471,7 +473,7 @@ class ExMonitor extends Component {
 
   }
 
-////Monitor Controller
+////Monitor Controllers
 
   onRecordingModeHandler(){
     this.recordingMode = !this.recordingMode;
@@ -542,7 +544,7 @@ class ExMonitor extends Component {
     }
   }
 
-/////Mouse over Monitor controller
+/////Mouse over Monitor controllers
 
   onTrackingModeHandler(){
     this.trackingMode = !this.trackingMode;
@@ -648,10 +650,10 @@ class ExMonitor extends Component {
               </div>
       			</div>
       		</div>
-      		<div className="col-md-3 pr-0">
+      		<div className="col-md-3 pr-0 pl-5">
           	<div className="row">
               <div className="col-md-12">
-                <IdentifyBodies onClick = {()=> this.onIdentifyBodyClickHandler}/>
+                <IdentifyBodiesIcon onClick = {()=> this.onIdentifyBodyClickHandler}/>
               </div>
             </div>
             <div className="row">
